@@ -28,7 +28,7 @@ const Drawer = ({ onDelete, onCloseCart, items = [] }) => {
               </div>
               <img
                 key={index}
-                onClick={onDelete}
+                onClick={() => onDelete(obj.id)}
                 className="removeBtn"
                 src="/img/btn-remove.svg"
                 alt="Remove"
