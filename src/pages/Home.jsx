@@ -1,3 +1,4 @@
+import React from "react";
 import Card from "../components/Card";
 
 function Home({
@@ -8,6 +9,23 @@ function Home({
   onAddToFavorite,
   onAddToCart,
 }) {
+  
+
+  const renderItems = () => {
+    return items
+    .filter((item) =>
+      item.name.toLowerCase().includes(searchValue.toLowerCase())
+    )
+    .map((item, index) => (
+      <Card
+        key={index}
+        onPlus={(obj) => onAddToCart(obj)}
+        onFavorite={(obj) => onAddToFavorite(obj)}
+        {...item}
+      />
+    ))
+  }
+
   return (
     <div className="content p-40">
       <div className="d-flex align-center justify-between mb-40">
@@ -23,18 +41,7 @@ function Home({
       </div>
 
       <div className="d-flex flex-wrap">
-        {items
-          .filter((item) =>
-            item.name.toLowerCase().includes(searchValue.toLowerCase())
-          )
-          .map((item, index) => (
-            <Card
-              key={index}
-              onPlus={(obj) => onAddToCart(obj)}
-              onFavorite={(obj) => onAddToFavorite(obj)}
-              {...item}
-            />
-          ))}
+        {renderItems()}
       </div>
     </div>
   );

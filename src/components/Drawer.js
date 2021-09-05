@@ -1,6 +1,11 @@
 import React from "react";
+import { AppContext } from "../App";
+import Info from "./Info";
 
 const Drawer = ({ onDelete, onCloseCart, items = [] }) => {
+  const { cartItems } = React.useContext(AppContext)
+  const totalPrice = cartItems.reduce((sum, obj) => obj.price + sum, 0)
+
   return (
     <div className="overlay">
       <div className="drawer">
@@ -14,44 +19,57 @@ const Drawer = ({ onDelete, onCloseCart, items = [] }) => {
           />
         </h2>
 
-        <div className="items">
-          {items.map((obj, index) => (
-            <div className="cartItem d-flex align-center mb-20">
-              <div
-                style={{ backgroundImage: `url(${obj.imageUrl})` }}
-                className="cartItemImg"
-              ></div>
+        {items.length > 0 ? (
+          <>
+            <div className="items">
+              {items.map((obj, index) => (
+                <div
+                  key={obj.id}
+                  className="cartItem d-flex align-center mb-20"
+                >
+                  <div
+                    style={{ backgroundImage: `url(${obj.imageUrl})` }}
+                    className="cartItemImg"
+                  ></div>
 
-              <div className="mr-20 flex">
-                <p className="mb-5">{obj.name}</p>
-                <b>${obj.price}</b>
-              </div>
-              <img
-                key={index}
-                onClick={() => onDelete(obj.id)}
-                className="removeBtn"
-                src="/img/btn-remove.svg"
-                alt="Remove"
-              />
+                  <div className="mr-20 flex">
+                    <p className="mb-5">{obj.name}</p>
+                    <b>${obj.price}</b>
+                  </div>
+                  <img
+                    key={index}
+                    onClick={() => onDelete(obj.id)}
+                    className="removeBtn"
+                    src="/img/btn-remove.svg"
+                    alt="Remove"
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        <div className="cartTotalBlock">
-          <ul>
-            <li>
-              <span>Total:</span>
-              <div></div>
-              <b>125$</b>
-            </li>
-            <li>
-              <span>Tax 10%:</span>
-              <div></div>
-              <b>12$</b>
-            </li>
-          </ul>
-          <button className="greenButton">Confirm Order</button>
-        </div>
+            <div className="cartTotalBlock">
+              <ul>
+                <li>
+                  <span>Total:</span>
+                  <div></div>
+                  <b>{totalPrice}$</b>
+                </li>
+                <li>
+                  <span>Tax 10%:</span>
+                  <div></div>
+                  <b>{(totalPrice / 100) * 10}$</b>
+                </li>
+              </ul>
+              <button className="greenButton">Confirm Order</button>
+            </div>
+          </>
+        ) : (
+          <Info
+            title="Cart is empty"
+            description="Please add at least one item to your cart"
+            image="/img/empty-cart.jpg"
+          />
+        )}
       </div>
     </div>
   );

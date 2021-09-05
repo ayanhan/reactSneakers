@@ -1,4 +1,5 @@
 import React from "react";
+import { AppContext } from "../../App";
 import styles from "./Card.module.scss";
 
 const Card = ({
@@ -10,17 +11,16 @@ const Card = ({
   onFavorite,
   favorited = false,
 }) => {
-  const [isAdded, setIsAdded] = React.useState(false);
+  const {isItemAdded} = React.useContext(AppContext)
   const [isFavorite, setIsFavorite] = React.useState(favorited);
 
   const onClickPlus = () => {
-    onPlus({ name, price, imageUrl });
-    setIsAdded(!isAdded);
+    onPlus({ id, name, price, imageUrl });
   };
 
   const onClickFavorite = () => {
     setIsFavorite(!isFavorite);
-    onFavorite({id, name, price, imageUrl });
+    onFavorite({ id, name, price, imageUrl });
   };
 
   return (
@@ -31,18 +31,18 @@ const Card = ({
           alt="Unliked"
         />
       </div>
-      <img width={133} height={112} src={imageUrl} alt="sneaker" />
+      <img width='100%' height={135} src={imageUrl} alt="sneaker" />
       <h5>{name}</h5>
       <div className="d-flex justify-between align-center">
         <div className="d-flex flex-column ">
           <span>Price</span>
-          <b>{price}</b>
+          <b>{`${price}$`}</b>
         </div>
 
         <img
           className={styles.plus}
           onClick={onClickPlus}
-          src={isAdded ? "/img/btn-checked.svg" : "/img/plus.svg"}
+          src={isItemAdded(id) ? "/img/btn-checked.svg" : "/img/plus.svg"}
           alt="Plus"
         />
       </div>
