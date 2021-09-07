@@ -1,10 +1,41 @@
+import axios from "axios";
 import React from "react";
 import { AppContext } from "../App";
 import Info from "./Info";
 
+const delay = () => new Promise((resolve) => setTimeout(resolve, 1000))
+
 const Drawer = ({ onDelete, onCloseCart, items = [] }) => {
-  const { cartItems } = React.useContext(AppContext)
-  const totalPrice = cartItems.reduce((sum, obj) => obj.price + sum, 0)
+  const {cartItems, setCartItems} = React.useContext(AppContext);
+  const [isOrderComlete, setIsOrderComplete] = React.useState(false);
+  const [orderId, setOrderId] = React.useState(null);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const totalPrice = cartItems.reduce((sum, obj) => obj.price + sum, 0);
+
+  const onClickOrder = async () => {
+    try {
+      setIsLoading(true);
+      const { data } = await axios.post("https://611ca3f1a18e850017decb4e.mockapi.io/orders", {
+        items: cartItems,
+      });
+     
+      setOrderId(data.id);
+      setIsOrderComplete(true);
+      setCartItems([]);
+
+      //because of mockapi problem
+
+      for (let i = 0; i < cartItems.length; i++ ) {
+        const item = cartItems[i]
+        await axios.delete("https://611ca3f1a18e850017decb4e.mockapi.io/cart/" + item.id)
+        await delay()
+      }
+       
+    } catch (e) {
+      console.log(e);
+    }
+    setIsLoading(false);
+  };
 
   return (
     <div className="overlay">
@@ -20,7 +51,7 @@ const Drawer = ({ onDelete, onCloseCart, items = [] }) => {
         </h2>
 
         {items.length > 0 ? (
-          <>
+          <div className="d-flex flex-column flex">
             <div className="items">
               {items.map((obj, index) => (
                 <div
@@ -60,14 +91,26 @@ const Drawer = ({ onDelete, onCloseCart, items = [] }) => {
                   <b>{(totalPrice / 100) * 10}$</b>
                 </li>
               </ul>
-              <button className="greenButton">Confirm Order</button>
+              <button
+                disabled={isLoading}
+                onClick={onClickOrder}
+                className="greenButton"
+              >
+                Confirm Order
+              </button>
             </div>
-          </>
+          </div>
         ) : (
           <Info
-            title="Cart is empty"
-            description="Please add at least one item to your cart"
-            image="/img/empty-cart.jpg"
+            title={isOrderComlete ? "Thank you for order!" : "Cart is empty"}
+            description={
+              isOrderComlete
+                ? `Your order #${orderId} sent to post office`
+                : "Please add at least one item to your cart"
+            }
+            image={
+              isOrderComlete ? "/img/complete-order.jpg" : "/img/empty-cart.jpg"
+            }
           />
         )}
       </div>

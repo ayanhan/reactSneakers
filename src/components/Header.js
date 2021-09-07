@@ -20,7 +20,7 @@ const Header = ({ onClickCart }) => {
       <ul className="d-flex">
         <li onClick={onClickCart} className="mr-30 cu-p">
           <img width={18} height={18} src="/img/cart.svg" alt="cart" />
-          <span>{totalPrice}$</span>
+          <span><b>{totalPrice}$</b></span>
         </li>
         <Link to="/favorites">
           <li className="mr-20 cu-p">
