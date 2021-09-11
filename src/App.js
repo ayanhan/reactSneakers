@@ -39,21 +39,35 @@ function App() {
     fetchData();
   }, []);
 
-  const onAddToCart = (obj) => {
+  const onAddToCart = async (obj) => {
     const findItem = cartItems.find(
       (item) => Number(item.parentId) === Number(obj.id)
     );
 
     if (findItem) {
-      axios.delete(
+      await axios.delete(
         `https://611ca3f1a18e850017decb4e.mockapi.io/cart/${findItem.id}`
       );
       setCartItems((prev) =>
         prev.filter((item) => Number(item.parentId) !== Number(obj.id))
       );
     } else {
-      axios.post("https://611ca3f1a18e850017decb4e.mockapi.io/cart", obj);
       setCartItems((prev) => [...prev, obj]);
+      const { data } = await axios.post(
+        "https://611ca3f1a18e850017decb4e.mockapi.io/cart",
+        obj
+      );
+      setCartItems((prev) =>
+        prev.map((item) => {
+          if (item.parentId === data.parentId) {
+            return {
+              ...item,
+              id: data.id,
+            };
+          }
+          return item;
+        })
+      );
     }
   };
 
