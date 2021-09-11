@@ -41,12 +41,12 @@ const Card = ({
           <b>{`${price}$`}</b>
         </div>
 
-        <img
+        {onPlus && (<img
           className={styles.plus}
           onClick={onClickPlus}
           src={isItemAdded(id) ? "/img/btn-checked.svg" : "/img/plus.svg"}
           alt="Plus"
-        />
+        />)}
       </div>
     </div>
   );

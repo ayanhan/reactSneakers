@@ -1,11 +1,12 @@
 import axios from "axios";
 import React from "react";
-import { AppContext } from "../App";
-import Info from "./Info";
+import { AppContext } from "../../App";
+import Info from "../Info";
+import styles from './Drawer.module.scss';
 
 const delay = () => new Promise((resolve) => setTimeout(resolve, 1000))
 
-const Drawer = ({ onDelete, onCloseCart, items = [] }) => {
+const Drawer = ({ onDelete, onCloseCart, items = [], opened }) => {
   const {cartItems, setCartItems} = React.useContext(AppContext);
   const [isOrderComlete, setIsOrderComplete] = React.useState(false);
   const [orderId, setOrderId] = React.useState(null);
@@ -38,8 +39,8 @@ const Drawer = ({ onDelete, onCloseCart, items = [] }) => {
   };
 
   return (
-    <div className="overlay">
-      <div className="drawer">
+    <div className={`${styles.overlay} ${opened ? styles.overlayVisible : ''}`}>
+      <div className={styles.drawer}>
         <h2 className="mb-30 d-flex justify-between">
           Cart{" "}
           <img
@@ -52,7 +53,7 @@ const Drawer = ({ onDelete, onCloseCart, items = [] }) => {
 
         {items.length > 0 ? (
           <div className="d-flex flex-column flex">
-            <div className="items">
+            <div className="items flex">
               {items.map((obj, index) => (
                 <div
                   key={obj.id}

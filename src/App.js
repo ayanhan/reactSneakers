@@ -2,10 +2,11 @@ import axios from "axios";
 import React from "react";
 import { Route } from "react-router-dom";
 
-import Drawer from "./components/Drawer";
+import Drawer from "./components/Drawer/index.js";
 import Header from "./components/Header";
 import Favorites from "./pages/Favorites";
 import Home from "./pages/Home";
+import Orders from "./pages/Orders";
 
 export const AppContext = React.createContext({});
 
@@ -19,15 +20,13 @@ function App() {
   React.useEffect(() => {
     async function fetchData() {
       try {
-        const cartResponse = await axios.get(
-          "https://611ca3f1a18e850017decb4e.mockapi.io/cart"
-        );
-        const favoritesResponse = await axios.get(
-          "https://611ca3f1a18e850017decb4e.mockapi.io/favorites"
-        );
-        const itemsResponse = await axios.get(
-          "https://611ca3f1a18e850017decb4e.mockapi.io/items"
-        );
+        // promise all to wait for all requests to finish
+        const [cartResponse, favoritesResponse, itemsResponse] =
+          await Promise.all([
+            axios.get("https://611ca3f1a18e850017decb4e.mockapi.io/cart"),
+            axios.get("https://611ca3f1a18e850017decb4e.mockapi.io/favorites"),
+            axios.get("https://611ca3f1a18e850017decb4e.mockapi.io/items"),
+          ]);
 
         setCartItems(cartResponse.data);
         setFavorites(favoritesResponse.data);
@@ -41,8 +40,9 @@ function App() {
   }, []);
 
   const onAddToCart = (obj) => {
-    const findItem = cartItems.find((item) => Number(item.parentId) === Number(obj.id))
-
+    const findItem = cartItems.find(
+      (item) => Number(item.parentId) === Number(obj.id)
+    );
 
     if (findItem) {
       axios.delete(
@@ -104,16 +104,16 @@ function App() {
         onAddToFavorite,
         setCartOpened,
         setCartItems,
+        onAddToCart,
       }}
     >
       <div className="wrapper clear">
-        {cartOpened ? (
-          <Drawer
-            onDelete={onDeleteFromCart}
-            items={cartItems}
-            onCloseCart={() => setCartOpened(false)}
-          />
-        ) : null}
+        <Drawer
+          onDelete={onDeleteFromCart}
+          items={cartItems}
+          onCloseCart={() => setCartOpened(false)}
+          opened={cartOpened}
+        />
 
         <Header onClickCart={() => setCartOpened(true)} />
 
@@ -131,6 +131,10 @@ function App() {
 
         <Route path="/favorites">
           <Favorites />
+        </Route>
+
+        <Route path="/orders">
+          <Orders />
         </Route>
       </div>
     </AppContext.Provider>
