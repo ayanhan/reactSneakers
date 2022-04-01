@@ -1,6 +1,6 @@
 Stack: 
 
-### ReactJS + хуки
+### ReactJS + hooks
 ### React Router
 ### Axios
 ### SCSS
